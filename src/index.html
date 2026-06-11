@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skip Link 无障碍组件演示</title>
+  <link rel="stylesheet" href="skip-link.css">
+</head>
+<body>
+
+  <!-- Skip Link：必须放在 body 第一个子元素 -->
+  <a class="skip-link" href="#main-content">跳转到主要内容</a>
+
+  <!-- 模拟的页头与导航（键盘用户可通过 skip-link 跳过） -->
+  <header class="site-header">
+    <h1>示例网站</h1>
+  </header>
+
+  <nav class="nav-bar" aria-label="主导航">
+    <a href="#">首页</a>
+    <a href="#">产品</a>
+    <a href="#">服务</a>
+    <a href="#">关于我们</a>
+    <a href="#">联系我们</a>
+    <a href="#">博客</a>
+    <a href="#">帮助中心</a>
+  </nav>
+
+  <!-- 主要内容区域：skip-link 的 href 目标 -->
+  <main id="main-content" tabindex="-1">
+    <h2>主要内容区域</h2>
+    <p>
+      这是页面的主要内容。使用键盘导航的用户按下 <kbd>Tab</kbd> 键时，
+      页面左上角会出现一个 "跳转到主要内容" 的链接，按下 <kbd>Enter</kbd>
+      即可跳过顶部导航直接到达此处。
+    </p>
+    <p>
+      Skip link 是一种重要的无障碍辅助机制，帮助键盘用户（包括运动障碍用户
+      和屏幕阅读器用户）快速跳过重复性的导航区域，直达页面核心内容。
+    </p>
+    <p>
+      请尝试：按下 <kbd>Tab</kbd> 键激活 skip link，然后按 <kbd>Enter</kbd>
+      跳转到此区域。
+    </p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 示例网站 — Skip Link 无障碍组件演示</p>
+  </footer>
+
+</body>
+</html>

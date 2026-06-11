@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skip Link 无障碍使用文档</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.8;
+      color: #1a1a1a;
+      background: #f9fafb;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    h1 { font-size: 28px; margin-bottom: 8px; color: #005fcc; border-bottom: 3px solid #005fcc; padding-bottom: 8px; }
+    h2 { font-size: 22px; margin-top: 40px; margin-bottom: 12px; color: #1a1a1a; border-left: 4px solid #005fcc; padding-left: 12px; }
+    h3 { font-size: 17px; margin-top: 24px; margin-bottom: 8px; }
+    p, li { margin-bottom: 12px; }
+    ul { padding-left: 24px; }
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 14px;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+    }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+    .keyword { color: #7dd3fc; }
+    .selector { color: #fbbf24; }
+    .property { color: #a5f3fc; }
+    .value { color: #86efac; }
+    .comment { color: #64748b; font-style: italic; }
+    .note {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      border-left: 4px solid #f59e0b;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin: 16px 0;
+    }
+    .note strong { color: #92400e; }
+    .wcag-badge {
+      display: inline-block;
+      background: #059669;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 15px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+    }
+    th { background: #f3f4f6; font-weight: 600; }
+    kbd {
+      display: inline-block;
+      padding: 2px 7px;
+      font-size: 13px;
+      font-family: monospace;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 3px;
+      box-shadow: 0 1px 0 #d1d5db;
+    }
+  </style>
+</head>
+<body>
+
+<h1><code>.skip-link</code> 无障碍使用文档</h1>
+<p>本文档描述 <code>.skip-link</code> 组件的无障碍实现细节，涵盖其定位方式、聚焦可见性策略以及 <code>href</code> 目标指向的规范要求。</p>
+
+<!-- ======================================== -->
+<h2>一、概述</h2>
+<!-- ======================================== -->
+<p>
+  Skip link（跳转链接）是一种面向键盘用户和屏幕阅读器用户的无障碍辅助机制。
+  它允许用户跳过页面顶部的重复性导航内容，直接到达主内容区域。
+  <span class="wcag-badge">WCAG 2.4.1</span> <strong>Bypass Blocks</strong> 明确要求页面提供跳过重复块的机制。
+</p>
+
+<div class="note">
+  <strong>适用场景：</strong>所有包含全局导航栏、页眉、面包屑等重复内容的页面，均应在 <code>&lt;body&gt;</code> 的第一个子元素位置放置 skip link。
+</div>
+
+<!-- ======================================== -->
+<h2>二、HTML 结构</h2>
+<!-- ======================================== -->
+
+<pre><code><span class="comment">&lt;!-- skip-link 必须是 body 的第一个子元素 --&gt;</span>
+&lt;<span class="keyword">body</span>&gt;
+  &lt;<span class="keyword">a</span> <span class="property">class</span>=<span class="value">"skip-link"</span>
+     <span class="property">href</span>=<span class="value">"#main-content"</span>&gt;
+    跳转到主要内容
+  &lt;/<span class="keyword">a</span>&gt;
+
+  &lt;<span class="keyword">header</span>&gt;<span class="comment">&lt;!-- 导航等重复内容 --&gt;</span>&lt;/<span class="keyword">header</span>&gt;
+
+  &lt;<span class="keyword">main</span> <span class="property">id</span>=<span class="value">"main-content"</span> <span class="property">tabindex</span>=<span class="value">"-1"</span>&gt;
+    <span class="comment">&lt;!-- 主要内容 --&gt;</span>
+  &lt;/<span class="keyword">main</span>&gt;
+&lt;/<span class="keyword">body</span>&gt;</code></pre>
+
+<h3>关键属性说明</h3>
+<table>
+  <thead>
+    <tr><th>属性</th><th>值</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>class</code></td>
+      <td><code>"skip-link"</code></td>
+      <td>绑定 CSS 样式，控制定位与聚焦可见性</td>
+    </tr>
+    <tr>
+      <td><code>href</code></td>
+      <td><code>"#main-content"</code></td>
+      <td>指向主内容容器的 <code>id</code>，点击后页面滚动至目标区域</td>
+    </tr>
+    <tr>
+      <td><code>tabindex</code>（目标元素）</td>
+      <td><code>"-1"</code></td>
+      <td>使 <code>&lt;main&gt;</code> 等非交互元素可通过脚本聚焦，确保跳转后焦点正确落位</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ======================================== -->
+<h2>三、定位方式</h2>
+<!-- ======================================== -->
+
+<p>
+  <code>.skip-link</code> 采用 <code>position: fixed</code> 定位策略，始终固定在视口左上角，
+  默认状态下通过 <code>transform</code> 将其移出可视区域，实现"视觉隐藏但屏幕阅读器可读"的效果。
+</p>
+
+<pre><code><span class="selector">.skip-link</span> {
+  <span class="property">position</span>: <span class="value">fixed</span>;
+  <span class="property">top</span>: <span class="value">8px</span>;
+  <span class="property">left</span>: <span class="value">8px</span>;
+  <span class="property">z-index</span>: <span class="value">10000</span>;
+
+  <span class="comment">/* 默认隐藏：向上移出视口 */</span>
+  <span class="property">transform</span>: <span class="value">translateY(-200%)</span>;
+
+  <span class="property">transition</span>: <span class="value">transform 0.15s ease-in-out</span>;
+}</code></pre>
+
+<h3>定位策略对比</h3>
+<table>
+  <thead>
+    <tr><th>方案</th><th>优点</th><th>缺点</th><th>是否推荐</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position: fixed</code> + <code>transform</code></td>
+      <td>不占文档流空间；动画平滑；不依赖 overflow 裁剪</td>
+      <td>需要 z-index 管理</td>
+      <td>✅ 推荐</td>
+    </tr>
+    <tr>
+      <td><code>position: absolute</code> + <code>left: -9999px</code></td>
+      <td>实现简单</td>
+      <td>部分屏幕阅读器会朗读偏移后的位置信息；回归动画不平滑</td>
+      <td>❌ 不推荐</td>
+    </tr>
+    <tr>
+      <td><code>display: none</code> / <code>visibility: hidden</code></td>
+      <td>—</td>
+      <td>从可访问树中完全移除，屏幕阅读器无法读取</td>
+      <td>❌ 禁止使用</td>
+    </tr>
+    <tr>
+      <td><code>clip-path: inset(50%)</code></td>
+      <td>现代浏览器支持好</td>
+      <td>旧浏览器兼容性差</td>
+      <td>⚠️ 可选</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>为什么选择 <code>position: fixed</code>？</strong><br>
+  使用 fixed 定位确保 skip-link 不随页面滚动位移，无论用户滚动到何处，激活时始终出现在视口左上角的固定位置，提供一致的可预期体验。配合 <code>z-index: 10000</code> 保证其在所有页面层级之上可见。
+</div>
+
+<!-- ======================================== -->
+<h2>四、聚焦可见性</h2>
+<!-- ======================================== -->
+
+<p>
+  聚焦可见性是 skip-link 无障碍体验的核心。组件必须在键盘用户按下 <kbd>Tab</kbd> 时变得可见，
+  同时对鼠标用户保持隐藏，避免干扰视觉设计。
+</p>
+
+<h3>4.1 焦点触发显示</h3>
+<pre><code><span class="selector">.skip-link:focus</span> {
+  <span class="comment">/* 滑入视口，变得可见 */</span>
+  <span class="property">transform</span>: <span class="value">translateY(0)</span>;
+
+  <span class="comment">/* 高对比度焦点轮廓 */</span>
+  <span class="property">outline</span>: <span class="value">3px solid #ffbf47</span>;
+  <span class="property">outline-offset</span>: <span class="value">2px</span>;
+}</code></pre>
+
+<h3>4.2 区分键盘与鼠标焦点</h3>
+<pre><code><span class="comment">/* 现代浏览器：仅在键盘聚焦时显示 */</span>
+<span class="selector">.skip-link:focus-visible</span> {
+  <span class="property">transform</span>: <span class="value">translateY(0)</span>;
+  <span class="property">outline</span>: <span class="value">3px solid #ffbf47</span>;
+  <span class="property">outline-offset</span>: <span class="value">2px</span>;
+}
+
+<span class="comment">/* 鼠标点击时保持隐藏 */</span>
+<span class="selector">.skip-link:focus:not(:focus-visible)</span> {
+  <span class="property">transform</span>: <span class="value">translateY(-200%)</span>;
+  <span class="property">outline</span>: <span class="value">none</span>;
+}</code></pre>
+
+<h3>4.3 可见性要求清单</h3>
+<ul>
+  <li><strong>对比度：</strong>skip-link 文字与背景色的对比度需 ≥ 4.5:1（WCAG AA 级）。当前方案白色文字 (#fff) 在蓝色背景 (#005fcc) 上对比度约为 5.6:1。 <span class="wcag-badge">WCAG 1.4.3</span></li>
+  <li><strong>焦点指示器：</strong>焦点轮廓使用高对比度黄色 (#ffbf47)，宽度 3px，与组件自身蓝色形成鲜明对比，确保在各类背景下均可见。 <span class="wcag-badge">WCAG 2.4.7</span></li>
+  <li><strong>字号：</strong>不小于 16px，避免在高分辨率屏幕上过小。 <span class="wcag-badge">WCAG 1.4.4</span></li>
+  <li><strong>动画时长：</strong>过渡动画控制在 150ms 以内，既提供平滑视觉反馈，又不影响操作效率。 <span class="wcag-badge">WCAG 2.3.1</span></li>
+</ul>
+
+<div class="note">
+  <strong>禁止使用 <code>outline: none</code> 移除焦点轮廓！</strong><br>
+  移除默认焦点轮廓而不提供替代方案会导致键盘用户完全无法看到当前聚焦元素，
+  严重违反 WCAG 2.4.7（Focus Visible）要求。
+</div>
+
+<!-- ======================================== -->
+<h2>五、href 目标指向</h2>
+<!-- ======================================== -->
+
+<p>
+  skip-link 的 <code>href</code> 属性是一个页内锚点链接，指向主内容容器的 <code>id</code>。
+  正确设置目标指向是确保跳转功能生效的前提。
+</p>
+
+<h3>5.1 目标元素要求</h3>
+
+<pre><code><span class="comment">&lt;!-- 目标元素必须设置 id 和 tabindex --&gt;</span>
+&lt;<span class="keyword">main</span> <span class="property">id</span>=<span class="value">"main-content"</span> <span class="property">tabindex</span>=<span class="value">"-1"</span>&gt;
+  <span class="comment">&lt;!-- 页面主要内容 --&gt;</span>
+&lt;/<span class="keyword">main</span>&gt;</code></pre>
+
+<table>
+  <thead>
+    <tr><th>属性</th><th>必须</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>✅</td>
+      <td>唯一标识符，与 skip-link 的 <code>href</code> 值对应（含 <code>#</code> 前缀）</td>
+    </tr>
+    <tr>
+      <td><code>tabindex="-1"</code></td>
+      <td>✅</td>
+      <td>使 <code>&lt;main&gt;</code>、<code>&lt;div&gt;</code> 等非交互元素可接收程序化焦点。<code>-1</code> 表示不进入 Tab 序列，但可通过 <code>.focus()</code> 或锚点跳转聚焦</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.2 目标元素的 CSS 配合</h3>
+
+<pre><code><span class="comment">/* 平滑滚动至目标时留出顶部间距 */</span>
+<span class="selector">#main-content</span> {
+  <span class="property">scroll-margin-top</span>: <span class="value">20px</span>;
+}
+
+<span class="comment">/* 目标聚焦时的视觉反馈 */</span>
+<span class="selector">#main-content:focus</span> {
+  <span class="property">outline</span>: <span class="value">3px solid #005fcc</span>;
+  <span class="property">outline-offset</span>: <span class="value">4px</span>;
+}</code></pre>
+
+<ul>
+  <li><code>scroll-margin-top</code>：当页面使用锚点跳转滚动至目标时，在目标顶部留出间距，避免内容紧贴视口边缘。</li>
+  <li><code>:focus</code> 轮廓：跳转完成后，目标元素显示焦点轮廓，帮助用户确认当前所处位置。</li>
+</ul>
+
+<h3>5.3 多个 Skip Link 的场景</h3>
+<p>
+  对于结构复杂的页面，可以提供多个 skip link，分别指向不同区域：
+</p>
+
+<pre><code>&lt;<span class="keyword">nav</span> <span class="property">aria-label</span>=<span class="value">"跳过链接"</span>&gt;
+  &lt;<span class="keyword">a</span> <span class="property">class</span>=<span class="value">"skip-link"</span> <span class="property">href</span>=<span class="value">"#main-content"</span>&gt;跳转到主要内容&lt;/<span class="keyword">a</span>&gt;
+  &lt;<span class="keyword">a</span> <span class="property">class</span>=<span class="value">"skip-link"</span> <span class="property">href</span>=<span class="value">"#search"</span>&gt;跳转到搜索&lt;/<span class="keyword">a</span>&gt;
+  &lt;<span class="keyword">a</span> <span class="property">class</span>=<span class="value">"skip-link"</span> <span class="property">href</span>=<span class="value">"#footer-nav"</span>&gt;跳转到页脚导航&lt;/<span class="keyword">a</span>&gt;
+&lt;/<span class="keyword">nav</span>&gt;</code></pre>
+
+<div class="note">
+  <strong>href 目标常见错误：</strong>
+  <ul style="margin-top: 8px;">
+    <li>❌ <code>href="#"</code> — 回到页面顶部，无实际跳转效果</li>
+    <li>❌ <code>href="javascript:void(0)"</code> — 非锚点链接，屏幕阅读器无法正确解读</li>
+    <li>❌ 目标元素缺少 <code>tabindex="-1"</code> — 部分浏览器中焦点不会跟随跳转</li>
+    <li>❌ <code>href</code> 与目标 <code>id</code> 拼写不一致 — 跳转完全失效</li>
+  </ul>
+</div>
+
+<!-- ======================================== -->
+<h2>六、浏览器兼容性</h2>
+<!-- ======================================== -->
+
+<table>
+  <thead>
+    <tr><th>特性</th><th>Chrome</th><th>Firefox</th><th>Safari</th><th>Edge</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position: fixed</code></td>
+      <td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+    </tr>
+    <tr>
+      <td><code>:focus-visible</code></td>
+      <td>86+</td><td>85+</td><td>15.4+</td><td>86+</td>
+    </tr>
+    <tr>
+      <td><code>scroll-margin-top</code></td>
+      <td>69+</td><td>68+</td><td>14.1+</td><td>79+</td>
+    </tr>
+    <tr>
+      <td><code>tabindex="-1"</code></td>
+      <td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ======================================== -->
+<h2>七、无障碍检查清单</h2>
+<!-- ======================================== -->
+
+<table>
+  <thead>
+    <tr><th>检查项</th><th>WCAG 条款</th><th>级别</th><th>状态</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>skip-link 位于 <code>&lt;body&gt;</code> 第一个子元素</td>
+      <td>2.4.1 Bypass Blocks</td>
+      <td>A</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td>默认不可见，聚焦时可见</td>
+      <td>2.4.7 Focus Visible</td>
+      <td>AA</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td>文字与背景对比度 ≥ 4.5:1</td>
+      <td>1.4.3 Contrast</td>
+      <td>AA</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>href</code> 正确指向目标元素 <code>id</code></td>
+      <td>2.4.1 Bypass Blocks</td>
+      <td>A</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td>目标元素设置 <code>tabindex="-1"</code></td>
+      <td>2.4.1 Bypass Blocks</td>
+      <td>A</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td>焦点轮廓清晰可见</td>
+      <td>2.4.7 Focus Visible</td>
+      <td>AA</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td>链接文字具有描述性</td>
+      <td>2.4.4 Link Purpose</td>
+      <td>A</td>
+      <td>✅</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ======================================== -->
+<h2>八、测试方法</h2>
+<!-- ======================================== -->
+
+<h3>8.1 键盘测试</h3>
+<ul>
+  <li>打开页面后，按 <kbd>Tab</kbd> 键 — skip-link 应出现在视口左上角</li>
+  <li>按 <kbd>Enter</kbd> 键 — 页面应滚动至主内容区域，焦点落在 <code>#main-content</code> 元素上</li>
+  <li>继续按 <kbd>Tab</kbd> 键 — 焦点应从主内容区域内的第一个可交互元素开始，不回到页面顶部</li>
+</ul>
+
+<h3>8.2 屏幕阅读器测试</h3>
+<ul>
+  <li>使用 NVDA / JAWS / VoiceOver 打开页面</li>
+  <li>屏幕阅读器应朗读 "跳转到主要内容，链接"</li>
+  <li>激活链接后，应朗读主内容区域的起始内容</li>
+</ul>
+
+<h3>8.3 自动化测试</h3>
+<ul>
+  <li>使用 <a href="#">axe-core</a> 扫描页面，确认无 "bypass blocks" 相关违规</li>
+  <li>使用 <a href="#">Lighthouse</a> 无障碍审计，确认 skip-link 相关项通过</li>
+</ul>
+
+</body>
+</html>

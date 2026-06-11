@@ -1,0 +1,141 @@
+/* ============================================
+   Skip Link 无障碍组件样式
+   ============================================ */
+
+/* --- 1. 定位方式 ---
+   使用 fixed 定位将 skip-link 固定在视口左上角外侧，
+   默认状态下通过 translateY 将其移出可见区域，
+   确保不影响页面正常视觉布局。 */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10000;
+
+  /* 默认隐藏：移出视口 */
+  transform: translateY(-200%);
+
+  /* 基础外观 */
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #005fcc;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  text-decoration: none;
+  border: 3px solid #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  /* 过渡动画 */
+  transition: transform 0.15s ease-in-out;
+}
+
+/* --- 2. 聚焦可见性 ---
+   当用户通过 Tab 键将焦点移至 skip-link 时，
+   利用 :focus 伪类将其滑入视口，确保键盘用户可见。
+   使用 :focus-visible 进一步区分鼠标与键盘焦点。 */
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid #ffbf47;
+  outline-offset: 2px;
+}
+
+/* 对支持 :focus-visible 的现代浏览器增强 */
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid #ffbf47;
+  outline-offset: 2px;
+}
+
+/* 鼠标点击时不显示（仅键盘触发） */
+.skip-link:focus:not(:focus-visible) {
+  transform: translateY(-200%);
+  outline: none;
+}
+
+/* --- 3. href 目标锚点样式 ---
+   目标元素需要有 tabindex="-1" 以支持程序化聚焦，
+   添加视觉高亮反馈帮助用户确认跳转已生效。 */
+#main-content {
+  scroll-margin-top: 20px;
+}
+
+#main-content:focus {
+  outline: 3px solid #005fcc;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ============================================
+   以下为页面演示辅助样式（非组件核心）
+   ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: #1a1a1a;
+  background-color: #f5f5f5;
+}
+
+.site-header {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 16px 24px;
+}
+
+.site-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.nav-bar {
+  background-color: #333;
+  padding: 12px 24px;
+  display: flex;
+  gap: 24px;
+}
+
+.nav-bar a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-bar a:hover {
+  color: #fff;
+}
+
+main {
+  max-width: 800px;
+  margin: 32px auto;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+main h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #005fcc;
+}
+
+main p {
+  margin-bottom: 16px;
+}
+
+footer {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+  font-size: 14px;
+}
