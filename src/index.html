@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skip Link 组件 — 无障碍使用文档</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================
+       Skip Link 组件实例
+       ============================ -->
+  <a class="skip-link" href="#main-content">跳转到主要内容</a>
+
+  <!-- 导航栏（用于演示 skip-link 的跳过效果） -->
+  <nav class="site-nav" aria-label="主导航">
+    <span class="logo">A11y Docs</span>
+    <a href="#overview">概述</a>
+    <a href="#positioning">定位方式</a>
+    <a href="#focus-visibility">聚焦可见性</a>
+    <a href="#href-target">目标指向</a>
+    <a href="#code-reference">代码参考</a>
+  </nav>
+
+  <!-- 主内容区域 -->
+  <main class="main-content" id="main-content" tabindex="-1">
+
+    <!-- 概述 -->
+    <section class="doc-section" id="overview">
+      <h1>Skip Link 组件</h1>
+      <p class="subtitle">CSS <code class="code-inline">.skip-link</code> 无障碍使用文档</p>
+
+      <p><strong>Skip Link</strong>（跳过链接）是一种无障碍导航模式，允许键盘用户在按下 <kbd>Tab</kbd> 键时快速跳过页面顶部的重复导航区域，直接到达主要内容。这对于依赖键盘操作的用户和使用屏幕阅读器的用户尤为重要。</p>
+
+      <div class="demo-area">
+        <p><strong>交互演示：</strong>点击此区域外部，然后按 <kbd>Tab</kbd> 键，可看到页面左上角出现「跳转到主要内容」链接。按 <kbd>Enter</kbd> 键即可跳转到此处。</p>
+      </div>
+
+      <h2>组件特性一览</h2>
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>实现方式</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>定位方式</td>
+            <td><code>position: absolute</code></td>
+            <td>脱离文档流，默认隐藏在视口上方</td>
+          </tr>
+          <tr>
+            <td>隐藏机制</td>
+            <td><code>top: -100%</code></td>
+            <td>将元素移至视口外，保留可聚焦性</td>
+          </tr>
+          <tr>
+            <td>聚焦可见性</td>
+            <td><code>:focus { top: 0 }</code></td>
+            <td>聚焦时滑入视口左上角</td>
+          </tr>
+          <tr>
+            <td>目标指向</td>
+            <td><code>href="#main-content"</code></td>
+            <td>指向主内容区域的锚点 ID</td>
+          </tr>
+          <tr>
+            <td>层叠优先级</td>
+            <td><code>z-index: 1000</code></td>
+            <td>确保显示在所有页面元素之上</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 定位方式 -->
+    <section class="doc-section" id="positioning">
+      <h2>1. 定位方式</h2>
+
+      <p><code class="code-inline">.skip-link</code> 使用 <strong>绝对定位</strong>（<code class="code-inline">position: absolute</code>）将链接从正常文档流中移出，并通过 <code class="code-inline">top: -100%</code> 将其放置在视口上方不可见的位置。</p>
+
+      <h3>为什么选择绝对定位？</h3>
+      <ul>
+        <li><strong>不占据布局空间：</strong>绝对定位的元素脱离文档流，不会影响页面中其他元素的布局和排列。</li>
+        <li><strong>保留可聚焦性：</strong>与 <code class="code-inline">display: none</code> 或 <code class="code-inline">visibility: hidden</code> 不同，绝对定位且移出视口的元素仍然可以通过键盘 Tab 键获得焦点。</li>
+        <li><strong>屏幕阅读器可访问：</strong>元素仍然存在于 DOM 中且可被辅助技术识别和朗读。</li>
+      </ul>
+
+      <h3>为什么使用 <code class="code-inline">top: -100%</code> 而不是其他隐藏方式？</h3>
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>隐藏方式</th>
+            <th>可聚焦</th>
+            <th>屏幕阅读器可读</th>
+            <th>是否推荐</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>top: -100%</code>（视口外）</td>
+            <td>是</td>
+            <td>是</td>
+            <td>推荐</td>
+          </tr>
+          <tr>
+            <td><code>display: none</code></td>
+            <td>否</td>
+            <td>否</td>
+            <td>不推荐</td>
+          </tr>
+          <tr>
+            <td><code>visibility: hidden</code></td>
+            <td>否</td>
+            <td>否</td>
+            <td>不推荐</td>
+          </tr>
+          <tr>
+            <td><code>opacity: 0</code></td>
+            <td>是</td>
+            <td>是</td>
+            <td>可选（但缺少位移动画）</td>
+          </tr>
+          <tr>
+            <td><code>clip-path</code> 裁切</td>
+            <td>是</td>
+            <td>是</td>
+            <td>可选</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>关键 CSS 属性</h3>
+      <div class="code-block"><code>.skip-link {
+  position: absolute;   /* 脱离文档流 */
+  top: -100%;           /* 移出视口上方 */
+  left: 0;              /* 紧贴左侧 */
+  z-index: 1000;        /* 置于最高层 */
+}</code></div>
+
+      <div class="note-box">
+        <strong>注意：</strong><code class="code-inline">z-index: 1000</code> 确保当 skip-link 获得焦点并显示时，它不会被其他具有 z-index 的元素（如固定导航栏、模态框等）遮挡。请根据项目中的 z-index 层级体系适当调整此值。
+      </div>
+    </section>
+
+    <!-- 聚焦可见性 -->
+    <section class="doc-section" id="focus-visibility">
+      <h2>2. 聚焦可见性</h2>
+
+      <p>当用户通过 <kbd>Tab</kbd> 键将焦点移到 <code class="code-inline">.skip-link</code> 上时，组件通过 <code class="code-inline">:focus</code> 伪类将 <code class="code-inline">top</code> 值从 <code class="code-inline">-100%</code> 修改为 <code class="code-inline">0</code>，使链接从视口上方滑入并显示在页面左上角。</p>
+
+      <h3>聚焦状态样式</h3>
+      <div class="code-block"><code>.skip-link:focus {
+  top: 0;                         /* 移入可视区域 */
+  outline: 3px solid #e94560;     /* 高对比度焦点指示器 */
+  outline-offset: 2px;            /* 轮廓与元素间距 */
+}</code></div>
+
+      <h3>视觉反馈要点</h3>
+      <ul>
+        <li><strong>过渡动画：</strong>通过 <code class="code-inline">transition: top 0.15s ease-in-out</code> 提供平滑的滑入/滑出效果，避免突然出现造成的视觉跳跃。过渡时间应简短，避免阻碍快速导航。</li>
+        <li><strong>焦点轮廓：</strong>使用 <code class="code-inline">outline</code> 属性提供 3px 宽的高对比度焦点指示器，符合 <strong>WCAG 2.4.7 Focus Visible</strong> 要求。</li>
+        <li><strong>颜色对比度：</strong>白色文字（<code class="code-inline">#ffffff</code>）在深色背景（<code class="code-inline">#1a1a2e</code>）上的对比度约为 <strong>16.75:1</strong>，远超 WCAG AA 级别 4.5:1 的最低要求。</li>
+        <li><strong>最小点击/触摸区域：</strong>通过 <code class="code-inline">padding: 12px 24px</code> 保证足够的交互区域，符合可操作性要求。</li>
+      </ul>
+
+      <div class="note-box">
+        <strong>WCAG 合规提示：</strong>根据 WCAG 2.1 Success Criterion 2.4.7（Focus Visible），所有可键盘操作的用户界面组件都必须有可见的焦点指示器。<code class="code-inline">.skip-link</code> 组件同时通过位置变化和轮廓样式提供双重焦点反馈。
+      </div>
+    </section>
+
+    <!-- href 目标指向 -->
+    <section class="doc-section" id="href-target">
+      <h2>3. <code class="code-inline">href</code> 目标指向</h2>
+
+      <p><code class="code-inline">.skip-link</code> 的 <code class="code-inline">href</code> 属性设置为页面内锚点，指向主内容区域的 <code class="code-inline">id</code>。用户激活链接后，浏览器会将视口滚动到目标元素并将焦点转移至该元素。</p>
+
+      <h3>HTML 结构</h3>
+      <div class="code-block"><code>&lt;!-- Skip Link：放在 &lt;body&gt; 内的第一个元素 --&gt;
+&lt;a class="skip-link" href="#main-content"&gt;跳转到主要内容&lt;/a&gt;
+
+&lt;!-- 导航区域（将被跳过） --&gt;
+&lt;nav&gt;...&lt;/nav&gt;
+
+&lt;!-- 目标：主内容区域 --&gt;
+&lt;main id="main-content" tabindex="-1"&gt;
+  ...
+&lt;/main&gt;</code></div>
+
+      <h3>关键实现要点</h3>
+      <ol>
+        <li>
+          <strong>链接位置：</strong><code class="code-inline">.skip-link</code> 必须是 <code class="code-inline">&lt;body&gt;</code> 内第一个可聚焦的元素，确保用户按下第一次 <kbd>Tab</kbd> 键时即可到达。
+        </li>
+        <li>
+          <strong>目标元素 ID：</strong><code class="code-inline">href="#main-content"</code> 中的锚点值必须与目标容器的 <code class="code-inline">id</code> 属性完全匹配。
+        </li>
+        <li>
+          <strong>tabindex="-1"：</strong>在目标元素（<code class="code-inline">&lt;main&gt;</code>）上设置 <code class="code-inline">tabindex="-1"</code>，使其可以通过编程方式接收焦点（锚点跳转），但不会出现在正常的 Tab 键序列中。
+        </li>
+        <li>
+          <strong>语义化标签：</strong>目标区域应使用 <code class="code-inline">&lt;main&gt;</code> 标签，与 ARIA landmark 角色保持一致，方便屏幕阅读器用户识别页面主要内容。
+        </li>
+      </ol>
+
+      <h3>常见目标指向模式</h3>
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>目标</th>
+            <th>href 值</th>
+            <th>适用场景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>主内容区域</td>
+            <td><code>#main-content</code></td>
+            <td>最常见，跳过顶部导航</td>
+          </tr>
+          <tr>
+            <td>搜索框</td>
+            <td><code>#search-input</code></td>
+            <td>搜索为核心功能的页面</td>
+          </tr>
+          <tr>
+            <td>侧边栏导航</td>
+            <td><code>#sidebar-nav</code></td>
+            <td>复杂布局中的辅助导航</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note-box">
+        <strong>最佳实践：</strong>如果页面有多个需要跳转的区域，可以提供多个 skip-link，将它们放在同一容器中并依次排列。但大多数页面只需要一个指向主内容区域的 skip-link 即可。
+      </div>
+    </section>
+
+    <!-- 完整代码参考 -->
+    <section class="doc-section" id="code-reference">
+      <h2>4. 完整代码参考</h2>
+
+      <h3>HTML</h3>
+      <div class="code-block"><code>&lt;!-- 在 &lt;body&gt; 开始后立即放置 --&gt;
+&lt;a class="skip-link" href="#main-content"&gt;跳转到主要内容&lt;/a&gt;
+
+&lt;header&gt;
+  &lt;nav aria-label="主导航"&gt;
+    &lt;a href="/"&gt;首页&lt;/a&gt;
+    &lt;a href="/about"&gt;关于&lt;/a&gt;
+    &lt;a href="/contact"&gt;联系&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;main id="main-content" tabindex="-1"&gt;
+  &lt;h1&gt;页面标题&lt;/h1&gt;
+  &lt;p&gt;页面主要内容...&lt;/p&gt;
+&lt;/main&gt;</code></div>
+
+      <h3>CSS</h3>
+      <div class="code-block"><code>/* 默认状态：隐藏在视口上方 */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 1000;
+  padding: 12px 24px;
+  background-color: #1a1a2e;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 3px solid #e94560;
+  border-radius: 0 0 8px 0;
+  outline: none;
+  transition: top 0.15s ease-in-out;
+}
+
+/* 聚焦状态：显示在页面左上角 */
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #e94560;
+  outline-offset: 2px;
+}</code></div>
+
+      <h3>浏览器兼容性</h3>
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>Chrome</th>
+            <th>Firefox</th>
+            <th>Safari</th>
+            <th>Edge</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>position: absolute</code></td>
+            <td>全部</td>
+            <td>全部</td>
+            <td>全部</td>
+            <td>全部</td>
+          </tr>
+          <tr>
+            <td><code>:focus</code> 伪类</td>
+            <td>全部</td>
+            <td>全部</td>
+            <td>全部</td>
+            <td>全部</td>
+          </tr>
+          <tr>
+            <td><code>transition</code></td>
+            <td>26+</td>
+            <td>16+</td>
+            <td>9+</td>
+            <td>12+</td>
+          </tr>
+          <tr>
+            <td><code>outline-offset</code></td>
+            <td>1+</td>
+            <td>1.5+</td>
+            <td>3+</td>
+            <td>15+</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Skip Link 无障碍组件文档 &mdash; 遵循 WCAG 2.1 指南</p>
+  </footer>
+
+</body>
+</html>

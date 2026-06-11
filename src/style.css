@@ -1,0 +1,238 @@
+/* ============================================
+   Skip Link Component - Accessibility Styles
+   ============================================ */
+
+/*
+ * .skip-link 组件
+ *
+ * 为键盘用户和屏幕阅读器用户提供快速跳转到主内容区域的导航链接。
+ * 默认状态下视觉隐藏，键盘聚焦时可见。
+ */
+
+/* 默认状态：绝对定位，移出可视区域 */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 1000;
+  padding: 12px 24px;
+  background-color: #1a1a2e;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 3px solid #e94560;
+  border-radius: 0 0 8px 0;
+  outline: none;
+  transition: top 0.15s ease-in-out;
+}
+
+/* 聚焦状态：移入可视区域，显示在页面左上角 */
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #e94560;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Demo Page Styles
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #f8f9fa;
+}
+
+/* 导航栏 */
+.site-nav {
+  background: #1a1a2e;
+  padding: 16px 32px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.site-nav a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.site-nav a:hover,
+.site-nav a:focus {
+  color: #fff;
+  outline: 2px solid #e94560;
+  outline-offset: 4px;
+}
+
+.site-nav .logo {
+  color: #e94560;
+  font-weight: 700;
+  font-size: 18px;
+  margin-right: auto;
+}
+
+/* 主内容区域 */
+.main-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  scroll-margin-top: 20px;
+}
+
+.main-content:focus {
+  outline: 3px dashed #e94560;
+  outline-offset: 4px;
+}
+
+/* 文档部分 */
+.doc-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.doc-section h1 {
+  font-size: 28px;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.doc-section h2 {
+  font-size: 22px;
+  color: #1a1a2e;
+  margin-top: 28px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #eee;
+}
+
+.doc-section h3 {
+  font-size: 18px;
+  color: #444;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.doc-section p {
+  margin-bottom: 12px;
+  color: #555;
+}
+
+.doc-section ul,
+.doc-section ol {
+  margin: 8px 0 16px 24px;
+  color: #555;
+}
+
+.doc-section li {
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #888;
+  margin-bottom: 24px;
+}
+
+/* 代码块 */
+.code-block {
+  background: #1a1a2e;
+  color: #e8e8e8;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 12px 0 16px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.code-block code {
+  color: inherit;
+}
+
+.code-inline {
+  background: #eef;
+  color: #1a1a2e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 14px;
+}
+
+/* 提示框 */
+.note-box {
+  background: #fff8e1;
+  border-left: 4px solid #ffc107;
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+}
+
+.note-box strong {
+  color: #e65100;
+}
+
+/* 交互演示区域 */
+.demo-area {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 16px 0;
+  text-align: center;
+  color: #888;
+  background: #fafafa;
+}
+
+.demo-area p {
+  color: #888;
+}
+
+/* 表格 */
+.property-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 16px;
+}
+
+.property-table th,
+.property-table td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.property-table th {
+  background: #f0f0f5;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.property-table td code {
+  background: #eef;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+/* 页脚 */
+.site-footer {
+  text-align: center;
+  padding: 32px;
+  color: #aaa;
+  font-size: 13px;
+  border-top: 1px solid #eee;
+  margin-top: 40px;
+}
